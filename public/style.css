@@ -10,8 +10,11 @@ div{
 }
 
 textarea{
-    
     resize: none;
+    margin: 5px;
+    padding: 5px;
+    border-radius: 5px;
+    font-family: inherit;
 }
 
 button{
@@ -19,8 +22,10 @@ button{
     color: #ffffff;
     border: 2px solid #101010;
     margin: 5px;
-    padding: 3px;
+    padding: 5px;
     font-size: 14px;
+    border-radius: 5px;
+    font-family: inherit;
 }
 
 button:disabled{
@@ -28,12 +33,22 @@ button:disabled{
     color: #707070;
 }
 
+button:hover{
+    background-color:  #3d3d3d;
+}
+
+button:active{
+    background-color: #606060;
+}
+
 input{
     background-color: #202020;
     color: #ffffff;
     border: 2px solid #101010;
     margin: 5px;
-    padding: 3px;
+    padding: 5px;
+    border-radius: 5px;
+    font-family: inherit;
 }
 
 input:disabled{
@@ -44,7 +59,7 @@ input:disabled{
 #container{
     display: grid;
     grid-template-columns: 200px auto 300px;
-    grid-template-rows: 50px auto;
+    grid-template-rows: 60px auto;
     gap: 5px;
     width: 100vw;
     height: 100vh;
@@ -59,16 +74,20 @@ input:disabled{
 #sidebar{
     background-color: #303030;
     padding: 10px;
+    border-top-right-radius: 10px;
 }
 
 #content{
     background-color: #303030;
     padding: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
 }
 
 #comments{
     background-color: #303030;
     padding: 10px;
+    border-top-left-radius: 10px;
 }
 
 #allPostsButton{

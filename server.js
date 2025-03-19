@@ -16,7 +16,7 @@ function Auth(){
     return(req, res, next) => {
         const auth = req.headers.authorization
         if(auth.split(" ")[0] != "Bearer"){
-            return res.json({"message":"Token is wrong or does not exist"})
+            return res.json({"message":"Token is wrong or does not exist"}).end()
         }
         else{
             const encToken = auth.split(" ")[1]
@@ -27,8 +27,7 @@ function Auth(){
                 req.admin = token.admin
                 next()
             } catch (error) {
-                res.json({"message":error})
-                res.end();
+                res.json({"message":error}).end()
             }
         }
     }
@@ -63,11 +62,12 @@ server.post("/login", async (req, res) => {
     })
     if(user){
         const token = JWT.sign({"username": user.username, "password": user.password, "admin": user.admin}, process.env.SECRETKEY, {expiresIn: "6h"})
-        res.json({"token": token, "username": user.username, "message":"Successful login"}).end()
+        res.json({"token": token, "username": user.username, "message":"Successful login"})
     }
     else{
-        res.status(400).json({"message":"Wrong username or password"}).end()
+        res.status(400).json({"message":"Wrong username or password"})
     }
+    res.end()
 })
 
 server.post("/addpost", Auth(), async (req, res) => {
@@ -182,7 +182,6 @@ server.delete("/deletereport", Auth(), async (req, res) =>{
             }
         })
         res.json({"message":"Reports successfully deleted"})
-        Console.WriteLine("Raw JSON Response: " + result);
     }
     else{
         res.status(400).json({"message":"No reports for that post were found"})

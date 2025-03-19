@@ -133,39 +133,6 @@ function AddReport(postId){
     }
 }
 
-//propably not needed here
-function DeleteReport(){
-    const delReq = new XMLHttpRequest()
-    delReq.open("delete", "/deletereport")
-    delReq.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("token"))
-    delReq.setRequestHeader("Content-Type", "Application/json")
-    delReq.send(JSON.stringify({
-        postId: postIdin.value
-    }))
-    delReq.onreadystatechange = () => {
-        if(delReq.readyState == 4 && delReq.status == 200){
-            const result = JSON.parse(delReq.response)
-            console.log(result.message)
-        }
-    }
-}
-
-//might not be needed. chenk before finishing
-function Users(){
-    const req = new XMLHttpRequest()
-    req.open("get", "/users")
-    req.setRequestHeader("Content-Type", "Application/json")
-    req.send()
-    req.onreadystatechange = () => {
-        if(req.readyState == 4 && req.status == 200){
-            const result = JSON.parse(req.response)
-            result.forEach(user => {
-                console.log(user.username, user.password, user.admin, user)
-            })
-        }
-    }
-}
-
 //Loads every post on the home page
 function GetPosts(){
     const req = new XMLHttpRequest()
@@ -207,8 +174,8 @@ function GetPosts(){
                 postContent.style.color = "white"
                 postContent.style.borderColor= "#101010"
                 postContent.style.display = "block"
-                postContent.style.height = "95%"
-                postContent.style.width = "99%"
+                postContent.style.height = "94%"
+                postContent.style.width = "98%"
                 
                 postButton.innerText = "Post"
 
@@ -240,6 +207,13 @@ function GetPosts(){
                     onePost.style.backgroundColor = "#202020"
                     onePost.style.margin = "5px"
                     onePost.style.padding = "10px"
+                    onePost.style.borderRadius = "10px"
+                    onePost.addEventListener("mouseover", function(){
+                        onePost.style.backgroundColor = "#272727"
+                    })
+                    onePost.addEventListener("mouseleave", function(){
+                        onePost.style.backgroundColor = "#202020"
+                    })
 
                     onePost.addEventListener("click", function(){
                         GetComments(post.postId)
@@ -302,12 +276,22 @@ function GetComments(postId){
                 oneComment.style.backgroundColor = "#202020"
                 oneComment.style.margin = "5px"
                 oneComment.style.padding = "10px"
+                oneComment.style.borderRadius = "10px"
 
                 if(sessionStorage.getItem("username") == comment.uploader){
                     const deleteCommentButton = document.createElement("button")
                     deleteCommentButton.innerText = "Delete"
+                    deleteCommentButton.style.backgroundColor = "#303030"
+                    deleteCommentButton.addEventListener("mouseleave", function(){
+                        deleteCommentButton.style.backgroundColor = "#303030"
+                    })
+                    deleteCommentButton.addEventListener("mouseover", function(){
+                        deleteCommentButton.style.backgroundColor = "#272727"
+                    })
+
 
                     deleteCommentButton.addEventListener("click", function(){
+                        deleteCommentButton.style.backgroundColor = "#3d3d3d"
                         DeleteComment(comment.commentId, postId)
                     })
 
@@ -340,10 +324,14 @@ function LoadPost(postContent, postId, uploader){
     
     const pContent = document.createElement("p")
     pContent.innerText = postContent
+    pContent.style.backgroundColor = "#202020"
     pContent.style.display = "block"
     pContent.style.margin = "20px"
+    pContent.style.padding = "10px"
+    pContent.style.borderRadius = "10px"
 
     const reportButton = document.createElement("button")
+    reportButton.id = "reportButton"
     reportButton.innerText = "Report"
     reportButton.style.margin = "20px"
 
@@ -355,7 +343,8 @@ function LoadPost(postContent, postId, uploader){
     content.appendChild(backButton)
 
 
-    if(sessionStorage.getItem("username") == uploader){
+    var username = sessionStorage.getItem("username")
+    if(username == uploader){
         const deleteButton = document.createElement("button")
         deleteButton.innerText = "Delete Post"
 
@@ -366,6 +355,8 @@ function LoadPost(postContent, postId, uploader){
         content.appendChild(deleteButton)
     }
 
+    GetReports(postId, username)
+
     reportButton.addEventListener("click", function(){
         reportButton.disabled = true
 
@@ -374,6 +365,7 @@ function LoadPost(postContent, postId, uploader){
         const cancelReportButton = document.createElement("button")
 
         reportInput.id = "reportInput"
+        reportInput.placeholder = "Report"
 
         addReportButton.innerText = "Add report"
 
@@ -404,6 +396,25 @@ function LoadPost(postContent, postId, uploader){
 
     content.appendChild(pContent)
     content.appendChild(reportButton)
+}
+
+//Gets all reports and checks if a user has already reported a post
+function GetReports(postId, username){
+    const req = new XMLHttpRequest()
+    req.open("get", "/getreports")
+    req.setRequestHeader("Content-Type", "Application/json")
+    req.send()
+    req.onreadystatechange = () => {
+        if(req.readyState == 4 && req.status == 200){
+            const result = JSON.parse(req.response)
+            result.forEach(report => {
+                if(report.postId == postId && report.reporter == username){
+                    reportButton.disabled = true
+                    reportButton.title = "Already reported"
+                }
+            })
+        }
+    }
 }
 
 //Handles login and registration stuff
